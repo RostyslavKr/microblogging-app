@@ -1,18 +1,15 @@
-"use client";
-import {useState} from "react";
-import { TextField, Button,Radio,RadioGroup,FormControlLabel,FormControl,FormLabel } from "@mui/material";
 
+import { useState } from "react";
+import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from "@mui/material";
 import supabase from '../../supabase';
-
+import { useAuthContext } from "@/context";
+import ConfirmEmail from "./ConfirmEmail";
 
 export default function SignUpForm() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-
-    
-    
+    const { userType,success,setSuccess } = useAuthContext();
 
     const signUp = async () => {
         if (email === '') {
@@ -34,14 +31,26 @@ export default function SignUpForm() {
         finally {
             setEmail("");
             setPassword("");
+            updateTypeUser();
             setLoading(false);
-            setSuccess(true);
+            
         }
     }
-    
 
-    return ( 
-        <form autoComplete="off" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    const updateTypeUser = async () => {
+        try {
+            const { data, error } =
+                await supabase.auth.updateUser({
+                    data: { type: userType }
+                })
+            console.log(userType);
+        } catch (error) {
+            console.log(error);
+        }
+        finally {setSuccess(true); }
+    }
+
+    return <>{success ? <ConfirmEmail /> : <form autoComplete="off" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h2>Sign Up</h2>
                 <TextField 
                     label="Email"
@@ -67,9 +76,5 @@ export default function SignUpForm() {
 
                  <Button variant="outlined" color="secondary"  onClick={signUp}>Signup</Button>
              
-        </form>
-           
-        
-        
-     );
+        </form>}</> 
 }

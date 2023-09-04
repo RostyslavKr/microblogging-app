@@ -1,12 +1,8 @@
-"use client"
-import PostList from '../components/PostList';
-import { useAuthContext } from '@/context';
 export default function Home() {
-  const { typeUser } = useAuthContext();
+ 
   return (
     <div>
-      {typeUser !== "" && <PostList />}
-      
+      <h1>Home Page</h1>
    </div>
   )
 }

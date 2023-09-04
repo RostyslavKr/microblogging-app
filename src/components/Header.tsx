@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import User from './User';
 import { useAuthContext } from '@/context';
+
 export default function Header() {
   const { userData } = useAuthContext();
   return (
@@ -16,10 +17,10 @@ export default function Header() {
         <Toolbar>
           <EditNoteIcon fontSize='large' />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Blog
+            <Link href="/">Blog</Link>
           </Typography>
 
-          {userData === true ? <User /> : <><Button color="inherit"><Link href="/login">Login</Link></Button>
+          {userData  ? <User /> : <><Button color="inherit"><Link href="/login">Login</Link></Button>
           <Button color="inherit"><Link href="/register">SignUp</Link></Button></> }
           
          

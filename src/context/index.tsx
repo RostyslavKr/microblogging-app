@@ -1,22 +1,29 @@
 "use client";
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import {useRouter} from 'next/navigation'
 import Header from "@/components/Header";
-import TypeUser from '@/components/TypeUser';
 import supabase from "../../supabase";
 
 const AuthContext = createContext({});
-export const AuthContextProvider = ({children}:any) => {
-    const [userData, setUser] = useState(false);
-    const [typeUser, setTypeUser] = useState("");
 
+export const AuthContextProvider = ({children}:any) => {
+    const [userData, setUserData] = useState(false);
+    const [userType, setUserType] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [isLoggedin, setIsLoggedin] = useState(false);
+
+    const router = useRouter();
+    
     const onAuthStateChange = async () => {
         try {
-           
            const { data: { user } } = await supabase.auth.getUser()
             if (user) {
-                setUser(user)
-                console.log(userData);
-        }
+                router.push('/profile');
+               return setUserData(user)
+            }
+            else {
+                setUserData(false);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -26,20 +33,20 @@ export const AuthContextProvider = ({children}:any) => {
 
     useEffect(() => {
         onAuthStateChange();
-    }, [typeUser]);
-
+    }, [isLoggedin]);
+   
     const value = useMemo(() => {
         return {
-            userData,typeUser, signOut: () => supabase.auth.signOut()
+            userData,userType,setUserType,success, setSuccess, isLoggedin,setIsLoggedin, signOut: () => supabase.auth.signOut()
 
         }
-    }, [userData]);
-     
-    return <AuthContext.Provider value={value}><Header /> {typeUser === "" && userData ? (<TypeUser setTypeUser={setTypeUser} />) : children}</AuthContext.Provider>
+    }, [userData,userType,success, isLoggedin]);
+    console.log("user", userData);
+    return <AuthContext.Provider value={value}><Header /> {children }   </AuthContext.Provider>
 }
 
 
 export const useAuthContext = () => {
-    const { userData, signOut, typeUser }: any = useContext(AuthContext);
-    return { userData, signOut, typeUser };
+    const { userData,userType,setUserType,success, setSuccess,setIsLoggedin, signOut}: any = useContext(AuthContext);
+    return { userData,userType,setUserType,success,setSuccess,setIsLoggedin, signOut };
 }

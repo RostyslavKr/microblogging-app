@@ -1,38 +1,18 @@
 "use client";
-import React, {useState} from "react";
+import React, { useState } from "react";
+import {usePathname, useRouter} from 'next/navigation'
 import { TextField, FormControl, Button } from "@mui/material";
 import supabase from '../../supabase';
-
+import { useAuthContext } from "@/context";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const pathname = usePathname();
+    const router = useRouter();
+    const { setIsLoggedin } = useAuthContext();
     
-    const signUp = async () => {
-        if (email === '') {
-            alert('Please enter a valid email')
-        }
-        if (password === '') {
-           alert('Please enter a valid password') 
-        }
-        try {
-            setLoading(true);
-          let { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            })
-
-        } catch (error) {
-            console.log(error)
-        }
-        finally {
-            setEmail("");
-            setPassword("");
-            setLoading(false);
-        }
-    }
 
     const login = async () => {
         if (email === '') {
@@ -53,6 +33,8 @@ export default function LoginForm() {
         }
          finally {
             setLoading(false);
+            setIsLoggedin(true);
+            router.push('/profile');
         }
     }
 
@@ -82,7 +64,7 @@ export default function LoginForm() {
                     value={password}
                     sx={{mb: 3}}
                  />
-                 <Button variant="outlined" color="secondary"  onClick={signUp}>Login</Button>
+                 <Button variant="outlined" color="secondary"  onClick={login}>Login</Button>
              
         </form>
            

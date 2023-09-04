@@ -1,33 +1,16 @@
 "use client";
 import {useState} from "react";
 import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from "@mui/material";
-import supabase from '../../supabase';
-
-export default function TypeUser({setTypeUser}:any) {
+import { useAuthContext } from '@/context';
+export default function TypeUser() {
     const [value, setValue] = useState('author');
-
-    const updateTypeUser = async () => {
-        try {
-            
-     const { data, error } = await supabase.auth.updateUser({
-  
-    data: { type: value }
+    const { setUserType } = useAuthContext();
     
-})
-
-        } catch (error) {
-            console.log(error)
-      }
-        finally {
-          setTypeUser(value);
-      }
-       
-    }
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
     };
     
-    return <FormControl>
+  return <FormControl>
       <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
       <RadioGroup
                    aria-labelledby="demo-controlled-radio-buttons-group"
@@ -38,6 +21,6 @@ export default function TypeUser({setTypeUser}:any) {
                   <FormControlLabel value="author" control={<Radio />} label="Author" />
                   <FormControlLabel value="commentator" control={<Radio />} label="Commentator" />
         </RadioGroup>
-        <Button variant="outlined" color="secondary"  onClick={updateTypeUser}>Choose</Button>
-    </FormControl>
+        <Button variant="outlined" color="secondary"  onClick={() => setUserType(value)}>Choose</Button>
+    </FormControl> 
 }
